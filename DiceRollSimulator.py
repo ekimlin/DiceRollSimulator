@@ -3,24 +3,13 @@ Author: 		Emma Kimlin
 Date:   		6 January 2017
 Title: 			DiceRollSimulator
 Purpose: 		Determines number of times a person would have to roll 2 dice to get expected
-				distribution of results. In other words, given the probability of each possible
-				result:
-					Result 		Probability 	Expected distribution of results (%)
-					   2 			1/36				2.7777
-					   3 			2/36				5.5555
-					   4			3/36				8.3333
-					   5			4/36				11.111
-					   6			5/36				13.888	
-					   7			6/36				16.6666
-					   8			5/36				13.888
-					   9			4/36				11.111
-					   10			3/36				8.3333
-					   11			2/36				5.5555
-					   12			1/36				2.7777
-				How many times do we have to roll the dice to see the results we expect?
-
+				distribution of results. Appends this number into text file (results.txt). 
+Run: 			python3 DiceRollSimulator.py [max_difference]
+					max_difference: allowable error between actual result and expected result 
+						for reach possible result 2-12 (positive int or double)
 """
 import random
+import sys
 
 def checkIfReachedExpectedDistro(expectedDistro, actualDistro, max_difference):
 	difference = 0
@@ -33,24 +22,36 @@ def checkIfReachedExpectedDistro(expectedDistro, actualDistro, max_difference):
 	return True # Reached expected distro. Return True.
 
 def main():
-	# Store the expected distribution of results in expectedDistribution. Each successive value 
-	# corresponds to a possible result such that expectedDistribution[i] = the expected percentage 
-	# of times result i+1 will appear.
-	expectedDistibution = [.0277, .0555, .0833, .1111, .1388, .1666, .1388, .1111, .0833, .0555, .0277]
-			
+	expectedDistibution = [.0277, .0555, .0833, .1111, .1388, .1666, .1388, .1111, .0833, .0555, .0277]	# Store the 
+									# expected distribution of results in expectedDistribution. Each successive value 
+									# corresponds to a possible result such that expectedDistribution[i] = the expected 
+									# percentage of times result i+1 will appear.			
 	actualDistribution = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] # Store the actual distribution of resuts. 
 	actualResults = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # Store cumulative number of times each result appears. 
 													  # Initialize total to zero. 
 	num_rolls = 0 									  # Total number of rolls across entire program execution. 									
-	max_difference = .1							  # Maxmimum difference the actual result and expected result 
-													  # for each possible result.
 	reachedExpectedDistribution = False;			  # Indicates whether actual results equal expected results within
 												  	  # maximum boundary of difference. 													 
-	# min_num_rolls = 11 Minimum number of times to roll before checking whether results match expected results.	
+	
 	die1Result = 0 									  # Store result of first die roll 																
 	die2Result = 0 									  # Store result of second die roll 																 
 	result = 0	   									  # Total of both rolls 																			
-
+	# Parse command line arguments: 
+	if len(sys.argv) == 1: # Case 1: No arguments provided. Set default values.
+		max_difference = .1 
+	elif len(sys.argv) > 2: # Case 2: Too many arguments provided. Output error and exit. 
+		print("Usage: python3 DiceRollSimulator.py [max_difference]")
+		exit(0)
+	else: # Case 3: User provided one argument
+		try: # Try to convert argument to integer and store in max_difference
+			max_difference = float(sys.argv[1])
+			if max_difference < 0: # max_difference can't be negative
+				print("max_difference cannot be negative")
+				exit(0)
+		except ValueError: # User did not enter an double as argument. 
+			print("max_difference must be a number.")
+			exit(0)
+	# Roll die:
 	while reachedExpectedDistribution == False:
 		num_rolls += 1
 		die1Result = random.randint(1, 6) # Roll the first dice
