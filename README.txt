@@ -19,11 +19,6 @@ How many times do we have to roll the dice to see the results we expect?
 NOTES: A Dice roll is simulated using the pseudo-random number generator command in python: random.randomint, 
 	which uses the Mersenne Twister as its underlying generator. 
 
-
-TO DO: 
-
-Add optional command line args to set max_difference and/or minimum number of times to roll die. 
-
-Output result into file. Append result, don't overwrite. 
-
-Add script to then read results file and ouputs average. 
+HOW TO RUN: 
+	python3 DiceRollSimulator.py [-d max_difference] [-i num_iterations]
+	FindAverage results.txt
