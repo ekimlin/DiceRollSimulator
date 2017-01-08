@@ -10,36 +10,45 @@ Run: 			python3 DiceRollSimulator.py [max_difference]
 """
 import random
 import sys
+import os
 
-def checkIfReachedExpectedDistro(expectedDistro, actualDistro, max_difference):
+def check_if_reached_expected_distro(expected_distro, 
+									actual_distro, 
+									max_difference):
 	difference = 0
 	for i in range(11): 
-		difference = abs(expectedDistro[i] - actualDistro[i]) # Find the difference between what we expected to roll 
-															  # and what we actually rolled for each possible result
-		if difference > max_difference:	# If that difference is greater than preset maximum difference, we have not 
-										# reached the expected distribution. Return False
+		# Find the difference between what we expected to roll 
+		# and what we actually rolled for each possible result
+		difference = abs(expected_distro[i] - actual_distro[i])
+		# If that difference is greater than preset maximum difference, 
+		# we have reached the expected distribution. Return False
+		if difference > max_difference:	
 			return False
 	return True # Reached expected distro. Return True.
 
 def main():
-	expectedDistibution = [.0277, .0555, .0833, .1111, .1388, .1666, .1388, .1111, .0833, .0555, .0277]	# Store the 
-									# expected distribution of results in expectedDistribution. Each successive value 
-									# corresponds to a possible result such that expectedDistribution[i] = the expected 
-									# percentage of times result i+1 will appear.			
-	actualDistribution = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] # Store the actual distribution of resuts. 
-	actualResults = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # Store cumulative number of times each result appears. 
-													  # Initialize total to zero. 
-	num_rolls = 0 									  # Total number of rolls across entire program execution. 									
-	reachedExpectedDistribution = False;			  # Indicates whether actual results equal expected results within
-												  	  # maximum boundary of difference. 													 
-	
-	die1Result = 0 									  # Store result of first die roll 																
-	die2Result = 0 									  # Store result of second die roll 																 
-	result = 0	   									  # Total of both rolls 																			
+	# Store the expected distribution of results in expectedDistribution. 
+	# Each successive value corresponds to a possible result such that 
+	# expectedDistribution[i] = the expected percentage of times result 
+	# i+1 will appear.	
+	expected_distibution = [.0277, .0555, .0833, .1111, .1388, .1666, 
+							.1388, .1111, .0833, .0555, .0277]	
+	# Store the actual distribution of results in actual_distribution. 
+	# This is updated each time dice are rolled.		
+	actual_distribution = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	# actual_results stores cumulative number of times each result appears: 
+	actual_results = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	num_rolls = 0 # Total number of rolls across entire program execution. 	
+	# Indicates whether actual results equal expected results within
+	# maximum boundary of difference. 								
+	reached_expected_distribution = False;													 	
+	die_1_result = 0 							  	 																
+	die_2_result = 0 								  																 
+	result = 0 # Sum of both rolls 																			
 	# Parse command line arguments: 
 	if len(sys.argv) == 1: # Case 1: No arguments provided. Set default values.
 		max_difference = .1 
-	elif len(sys.argv) > 2: # Case 2: Too many arguments provided. Output error and exit. 
+	elif len(sys.argv) > 2: # Case 2: Too many arguments provided.
 		print("Usage: python3 DiceRollSimulator.py [max_difference]")
 		exit(0)
 	else: # Case 3: User provided one argument
@@ -52,17 +61,25 @@ def main():
 			print("max_difference must be a number.")
 			exit(0)
 	# Roll die:
-	while reachedExpectedDistribution == False:
+	while reached_expected_distribution == False:
 		num_rolls += 1
-		die1Result = random.randint(1, 6) # Roll the first dice
-		die2Result = random.randint(1, 6) # Roll the second dice
-		result = die1Result + die2Result  # Add die rolls to get result
-		actualResults[result-2] += 1 	  # Add this result to tally of results
-		actualDistribution[result-2] = actualResults[result-2]/num_rolls # Update the distribution of actual results to reflect
-										  								 # this die roll.
-		reachedExpectedDistribution = checkIfReachedExpectedDistro(expectedDistibution, actualDistribution, max_difference)
-
-	print ("Number of rolls needed to reach expected distribution of results:", num_rolls)
+		die_1_result = random.randint(1, 6) # Roll the first dice
+		die_2_result = random.randint(1, 6) # Roll the second dice
+		result = die_1_result + die_2_result  # Add die rolls to get result
+		actual_results[result-2] += 1 	  # Add this result to tally of results
+		# Update the distribution of actual results to reflect this die roll:
+		actual_distribution[result-2] = actual_results[result-2]/num_rolls 
+		reached_expected_distribution = check_if_reached_expected_distro(expected_distibution, 
+																		 actual_distribution, 
+																		 max_difference)
+	# Output result into file:
+	try:
+		with open("results.txt", "a") as output_file:
+			output_file.write(str(num_rolls))
+			output_file.write("\n")
+	except IOError:
+		print("Cannot open output file to print result. Will print to standard", 
+				"output. \n Total number of rolls:", num_rolls)	
 
 if __name__ == "__main__": main()
 
