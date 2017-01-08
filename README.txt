@@ -22,3 +22,22 @@ NOTES: A Dice roll is simulated using the pseudo-random number generator command
 HOW TO RUN: 
 	python3 DiceRollSimulator.py [-d max_difference] [-i num_iterations]
 	FindAverage results.txt
+
+INTERPRETING OUTPUT:
+	Say the following is run: 
+		python3 DiceRollSimulator.py -1 1000
+		FindAverage results.txt	
+	And the output on stdout is "Average = 59"
+
+	This means that on average, you need to roll 59 times in order to achieve a difference of 10%
+	between expected and actual results for each possible result. For example, if you roll 59 times, 
+	you would expect about 8.3% of the rolls to sum to 10 (around 5 tens). However your actual results 
+	will differ by 10%, meaning that you could actually see between 0 and 10 tens. 
+
+	The lower your maximum difference between actual and expected results, the higher number of average 
+	rolls you will need. 
+
+
+
+
+

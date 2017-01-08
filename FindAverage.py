@@ -4,7 +4,7 @@ Date:   		7 January 2017
 Title: 			FindAverage.py
 Purpose: 		Given a file of numbers, each on its own line, find average of 
 				all the numbers in the file. 
-Usage: 			FindAverage -input_file.txt
+Usage: 			FindAverage input_file.txt
 					where input_file.txt is the file where the numbers that will
 						will be averaged are stored. 			
 """
@@ -32,6 +32,6 @@ def main():
 		exit(0)	
 	# Compute average and print to stdout:
 	average = sum_numbers/count_numbers
-	print("Average =", round(average, 2))
+	print("Average =", int(average))
 
 if __name__ == '__main__': main()
